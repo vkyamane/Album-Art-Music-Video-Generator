@@ -27,20 +27,28 @@ def videoedit():
     command12 = f"magick convert \"{generated}\" -background transparent -fill white -font \"{font}\" -size 675x70 caption:\"{compartist}\" -gravity center -geometry +346+10 -composite -matte \"{generated}\"" #Clusterfuck of commands, PLEASE help me fix this
     command13 = f"magick convert \"{generated}\" -background transparent -fill black -font \"{font}\" -size 675x70 caption:\"{trackstuff}\" -gravity center -geometry +348+227 -composite -matte \"{generated}\""
     command14 = f"magick convert \"{generated}\" -background transparent -fill white -font \"{font}\" -size 675x70 caption:\"{trackstuff}\" -gravity center -geometry +346+225 -composite -matte \"{generated}\""
+    command15 = f"magick convert \"{generated}\" -background transparent -fill black -font \"{font}\" -size 675x90 caption:\"{artist}\" -gravity center -geometry +348-43 -composite -matte \"{generated}\""
+    command16 = f"magick convert \"{generated}\" -background transparent -fill white -font \"{font}\" -size 675x90 caption:\"{artist}\" -gravity center -geometry +346-45 -composite -matte \"{generated}\""
     command = f"ffmpeg -loop 1 -framerate 1 -i \"{generated}\" -i \"{src}\" -c:v libx264 -preset veryslow -crf 0 -shortest \"{output}\"" #Makes the video
     os.system(command0)
     os.system(command2)
     print("Finished with the background")
     os.system(command3)
     os.system(command8)
-    os.system(command4)
-    os.system(command9)
+    if artist == compartist:
+        print("The label and artist are the same")
+        os.system(command15)
+        os.system(command16)
+    else:
+        print("The label and artist are different")
+        os.system(command4)
+        os.system(command9)
+        os.system(command7)
+        os.system(command12)
     os.system(command5)
     os.system(command10)
     os.system(command6) #WHY?
     os.system(command11)
-    os.system(command7)
-    os.system(command12)
     os.system(command13)
     os.system(command14)
     print("Finished with the metadata on the image")
@@ -49,7 +57,13 @@ def videoedit():
 
 def descriptionwriter():
     f = open(description, "w+")
-    f.write("Song info: \nTitle: "+title+"\nAlbum: "+album+"\nTrack: "+tracknumber+" / "+tracktotal+"\nAlbum Artist: "+artist+"\nArtist: "+compartist+"\nDate: "+date+"\nCatalog Number: "+catalog+"\nReplay Gain: "+replaygain+"\nWebsites: "+websites+"\nInsert your description here, but it's mostly for legal stuff if you want to point out"+"\nAlbum commentary: "+UploaderCommentary) #Sends the info to a text file, so I only really have to do minimal work in order to publish the description
+    f.write("Song info: \nTitle: "+title+"\nAlbum: "+album+"\nTrack: "+tracknumber+" / "+tracktotal+"\nAlbum Artist: "+artist+"\nArtist: "+compartist+"\nDate: "+date+"\nCatalog Number: "+catalog+"\nReplay Gain: "+replaygain+"\nInsert\nYour\nDescription\nHere") #Sends the info to a text file, so I only really have to do minimal work in order to publish the description
+    if not UploaderCommentary:
+        print("You didn't write anything under album commentary")
+        return
+    else:
+        print("Commentary annotated")
+        f.write("\nAlbum commentary: "+UploaderCommentary)
     print("Finished writing the description")
     f.close()
 
@@ -71,7 +85,6 @@ def GetTags(sourcePath):
     compartist = metadata["artist"][0]
     date = metadata["date"][0]
     album = metadata["album"][0]
-    websites = metadata["website"][0]
     replaygain = metadata["replaygain_track_gain"][0]
     catalog = metadata["catalognumber"][0]
     tracknumber = metadata["tracknumber"][0]
